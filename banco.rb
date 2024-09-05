@@ -149,18 +149,20 @@ class Transacao
       end
 
       if cliente[:saldo] >= valor_saque
-      puts "Confirmar saque? 1 - Sim | Enter - Sair"
-      opcao = gets.chomp
+        puts "Confirmar saque? 1 - Sim | Enter - Sair"
+        opcao = gets.chomp
+        
+        if opcao == '1'
+          cliente[:saldo] = cliente[:saldo] - valor_saque
+          puts "Saque realizado!"
+          puts "Saldo atual: R$ #{'%.2f' % cliente[:saldo]}"
+        else
+          puts "Saque não realizado!"
+        end
 
-      if opcao == '1'
-        cliente[:saldo] = cliente[:saldo] - valor_saque
-        puts "Saque realizado!"
-        puts "Saldo atual: R$ #{'%.2f' % cliente[:saldo]}"
       else
-        puts "Saque não realizado!"
+        puts "Saldo insuficiente!"
       end
-    else
-      puts "Conta inexistente!"
     end
   end
 
@@ -213,15 +215,55 @@ class Transacao
       puts "Conta remetente e/ou destinatária inexistentes!"
     end
   end
+end
+
+class Menu
+  def initialize
+    @cliente = Cliente.new
+    @conta = Conta.new
+    @transacao = Transacao.new
+  end
+
+  def exibir_menu
+    loop do
+      puts "\n--- Sistema Bancário ---"
+      puts "1 - Cadastrar Cliente"
+      puts "2 - Adicionar Conta"
+      puts "3 - Listar Contas"
+      puts "4 - Remover Conta"
+      puts "5 - Depositar"
+      puts "6 - Sacar"
+      puts "7 - Transferir"
+      puts "0 - Sair"
+      print "Escolha uma opção: "
+
+      opcao = gets.chomp.to_i
+
+      case opcao
+      when 1
+        @cliente.cadastrar
+      when 2
+        @conta.adicionar_conta(@cliente.cliente_banco)
+      when 3
+        @conta.listar_contas
+      when 4
+        @conta.remover_conta
+      when 5
+        @transacao.depositar
+      when 6
+        @transacao.sacar
+      when 7
+        @transacao.transferir
+      when 0
+        puts "Saindo do sistema..."
+        break
+      else
+        puts "Opção inválida!"
+      end
+    end
+  end
+end
+
+menu = Menu.new
+menu.exibir_menu
   
-
-cliente = Cliente.new
-#cliente.cadastrar
-cliente.lista_clientes
-
-conta = Conta.new
-conta.adicionar_conta(cliente.cliente_banco)
-conta.adicionar_conta(cliente.cliente_banco)
-
-conta.listar_contas
-conta.remover_conta
