@@ -1,126 +1,108 @@
 class Cliente
-
-  attr_accessor :nome, :cpf, :enderecos, :contas
+  attr_accessor :cliente_banco
 
   def initialize
-    @nome = nil
-    @cpf = nil
-    @titular = []
-    @enderecos = []
+    @cliente_banco = []
+  end
+
+
+  def clientes
+    clientes = [
+    { nome: "José da Silva", cpf: "123.456.789-00", endereco: "Rua A, 123, Bairro X, Cidade Y" },
+    { nome: "Maria Oliveira", cpf: "234.567.890-11", endereco: "Rua B, 456, Bairro Y, Cidade Z" },
+    { nome: "Pedro Santos", cpf: "345.678.901-22", endereco: "Rua C, 789, Bairro Z, Cidade X" },
+    { nome: "Ana Costa", cpf: "456.789.012-33", endereco: "Rua D, 101, Bairro W, Cidade Y" },
+    { nome: "Carlos Pereira", cpf: "567.890.123-44", endereco: "Rua E, 202, Bairro V, Cidade Z" }
+  ]
+  end
+
+  def cadastrar
+    puts "Sistema de cadastro de clientes"
+    print "Nome: "
+    nome = gets.chomp.capitalize
+    print "CPF: "
+    cpf = gets.chomp
+    print "Endereço: "
+    endereco = gets.chomp
+    @cliente_banco << { nome: nome, cpf: cpf, endereco: endereco}
+  end
+end
+
+class Conta
+
+  @@contador_conta = 100
+
+  attr_accessor :contas
+
+  def initialize
     @contas = []
   end
 
-  def cadastar
-    puts "Nome"
-    nome_cadastro = gets.chomp
-    puts "CPF"
-    cpf_cadastro = gets.chomp
-    @titular << { nome: nome_cadastro, cpf: cpf_cadastro }
+  def adicionar_conta(clientes)
+    clientes.each_with_index do |item, indice|
+      puts "#{indice + 1} - Nome: #{item[:nome]} | CPF: #{item[:cpf]} | Endereço: #{item[:endereco]}"
+    end
+
+    puts "Digite o número do indice do cliente"
+    puts "Enter para sair"
+    buscar_cliente = gets.chomp.to_i - 1
+
+    if buscar_cliente.between?(0, clientes.length - 1)
+      cliente_selecionado = clientes[buscar_cliente]
+      nova_conta = { numero_conta: @@contador_conta, cliente: cliente_selecionado}
+      @@contador_conta += 1
+      @contas << nova_conta
+      puts "Conta criada para #{cliente_selecionado[:nome]} - Número da conta: #{nova_conta[:numero_conta]}"
+    else
+      puts "Seleção inválida!"
+    end
   end
 
-  def adicionar_endereco
-    puts "Endereço"
-    endereco = gets.chomp.capitalize
-    puts "Cidade"
-    cidade = gets.chomp.capitalize
-    puts "Estado"
-    estado = gets.chomp.capitalize
-    @enderecos << { endereco: endereco, cidade: cidade, estado: estado }
-  end
-
-  def adicionar_conta
-    puts
-  end
-
-  def exibir_contas
-    puts
-  end
-
-end
-
-
-class ContaBancaria
-  attr_accessor :numero_conta, :saldo, :titular, :historico_transações
-
-  def initialize
-    @numero_conta = @numero
-    @saldo = 0
-    @historico_transações = []
-  end
-  def criar_conta
-    if @titular
-      titular = @titular
-      titulares.each do |titular|
-        puts "Nome: #{titular.nome}, CPF: #{titular.cpf}"
+  def remover_conta
+    if @contas.empty?
+      puts "Nenhuma conta criada!"
+      puts "Criar conta?"
+      puts "1 - Sim | Enter - Sair"
+      opcao = gets.chomp.to_i
+      if opcao == 1
+        adicionar_conta
+      else
+        puts "Saindo..."
+        return
       end
-      
-      
-      puts "Numero da conta"
-      @numero = gets.chomp.to_i
-      puts "Saldo inicial R$ #{@saldo}"
-      puts "Para a conta ser aberta, é necesário"
-      puts "fazer um deposito mninimo de R$ 50,00"
-      depositar
-
-    end
-
-  end
-
-  def depositar
-    if @numero_conta
-      puts "Valor"
-      valor = gets.chomp.to_f
-      @saldo = valor
-      puts "Deposito realizado de R$:  #{valor}"
-      puts "Saldo atual R$: #{@saldo}"
+    else
+      @contas.each_with_index do |numero_conta, indice|
+        puts "#{indice + 1} - Cliente: #{numero_conta[:cliente][:nome]} | CPF: #{numero_conta[:cliente][:cpf]}"
+      end
+      puts "Qual conta excluir?"
+      puts "Digite o número do indice"
+      escolha = gets.chomp.to_i - 1
+      if escolha > 0 && escolha < @contas.size
+        @contas.delete_at(escolha)
+        puts "Conta Excluida!"
+      else
+        puts "Escolha inválida!"
+      end
     end
   end
 
-  def sacar
-    if @conta > 0
-      puts "Seu saldo é R$: #{@saldo}"
-      puts "Valor do saque"
-      saque = gets.chomp.to_f
-      @saldo = @saldo - saque
-      puts "Foi sacado R$: #{saque}"
-      puts "Saldo atual R$: #{@saldo}"
+  def listar_contas
+    @contas.each do |conta|
+      puts "Número da conta: #{conta[:numero_conta]}, Cliente: #{conta[:cliente][:nome]}"
     end
   end
-
-  def transferir
-    puts
-  end
-
-  def exibir_saldo
-    puts
-  end
-
-  def exibir_historico
-    puts
-  end
-
 end
 
 class Transacao
-
-  attr_accessor :data, :tipo, :valor, :conta_origem, :conta_destino
-
-  def initialize
-    @data
-    @tipo
-    @valor
-    @conta_origem
-    @conta_destino
-  end
-
-  def detalhes_transacao
-    puts
-  end
 end
 
+cliente = Cliente.new
+#cliente.cadastrar
+cliente.clientes
 
-meu_cliente = Cliente.new
-meu_cliente.cadastar
-meu_cliente.adicionar_endereco
-minha_conta = ContaBancaria.new
-minha_conta.criar_conta
+conta = Conta.new
+conta.adicionar_conta(cliente.cliente_banco)
+conta.adicionar_conta(cliente.cliente_banco)
+
+conta.listar_contas
+conta.remover_conta
