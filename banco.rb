@@ -119,7 +119,7 @@ class Transacao
       if opcao == '1'
         cliente[:saldo] += valor
         puts "Depósito de R$ #{valor} efetuado!"
-        puts "Saldo atual: #{cliente[:saldo]}"
+        puts "Saldo atual: #{'%.2f' % cliente[:saldo]}"
       else
         puts "depósito não realizado!"
         return
@@ -130,6 +130,38 @@ class Transacao
   end
 
   def sacar
+    puts "Conta: "
+    conta = gets.chomp
+    puts "Sacar"
+    print "Valor R$: "
+    valor_saque = gets.chomp.to_f
+    cliente = @contas.find {|c| c[:conta] == conta}
+
+    if cliente
+      puts "Cliente encontrado!"
+      puts "Nome: #{cliente[:nome]}"
+      puts "CPF: #{cliente[:cpf]}"
+      puts "Saldo atual: #{'%.2f' % cliente[:saldo]}"
+
+      if valor_saque <= 0
+        puts "Valor de saque inválido!"
+        return
+      end
+
+      if cliente[:saldo] >= valor_saque
+      puts "Confirmar saque? 1 - Sim | Enter - Sair"
+      opcao = gets.chomp
+
+      if opcao == '1'
+        cliente[:saldo] = cliente[:saldo] - valor_saque
+        puts "Saque realizado!"
+        puts "Saldo atual: R$ #{'%.2f' % cliente[:saldo]}"
+      else
+        puts "Saque não realizado!"
+      end
+    else
+      puts "Conta inexistente!"
+    end
   end
 
   def transferir
