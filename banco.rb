@@ -165,8 +165,55 @@ class Transacao
   end
 
   def transferir
+    puts "Transferir"
+    print "Conta remetente: "
+    conta_remetente = gets.chomp
+    print "Conta destinatária: "
+    conta_destinataria = gets.chomp
+    print "Valor: "
+    valor = gets.chomp.to_f
+  
+    cliente = @contas.find { |c| c[:conta] == conta_remetente }
+    cliente_destinatario = @contas.find { |c| c[:conta] == conta_destinataria }
+  
+    if cliente && cliente_destinatario
+      puts "Clientes encontrados!"
+      puts "Remetente"
+      puts "Nome: #{cliente[:nome]}"
+      puts "CPF: #{cliente[:cpf]}"
+      puts "Saldo atual: R$ #{'%.2f' % cliente[:saldo]}"
+  
+      puts "Destinatário"
+      puts "Nome: #{cliente_destinatario[:nome]}"
+      puts "CPF: #{cliente_destinatario[:cpf]}"
+      puts "Valor a transferir: R$ #{'%.2f' % valor}"
+  
+      if valor <= 0
+        puts "Valor de transferência inválido!"
+        return
+      end
+  
+      if cliente[:saldo] >= valor
+        puts "Confirmar transferência?"
+        puts "1 - Sim | Enter - Não"
+        opcao = gets.chomp
+  
+        if opcao == '1'
+          cliente[:saldo] -= valor
+          cliente_destinatario[:saldo] += valor
+          puts "Transferência realizada com sucesso!"
+          puts "Novo saldo do remetente: R$ #{'%.2f' % cliente[:saldo]}"
+        else
+          puts "Transferência não realizada!"
+        end
+      else
+        puts "Saldo insuficiente para a transferência!"
+      end
+    else
+      puts "Conta remetente e/ou destinatária inexistentes!"
+    end
   end
-end
+  
 
 cliente = Cliente.new
 #cliente.cadastrar
