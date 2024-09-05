@@ -6,7 +6,7 @@ class Cliente
   end
 
 
-  def clientes
+  def lista_clientes
     clientes = [
     { nome: "José da Silva", cpf: "123.456.789-00", endereco: "Rua A, 123, Bairro X, Cidade Y" },
     { nome: "Maria Oliveira", cpf: "234.567.890-11", endereco: "Rua B, 456, Bairro Y, Cidade Z" },
@@ -24,7 +24,8 @@ class Cliente
     cpf = gets.chomp
     print "Endereço: "
     endereco = gets.chomp
-    @cliente_banco << { nome: nome, cpf: cpf, endereco: endereco}
+    saldo = 0.0
+    @cliente_banco << { nome: nome, cpf: cpf, endereco: endereco, saldo: saldo}
   end
 end
 
@@ -94,11 +95,50 @@ class Conta
 end
 
 class Transacao
+  attr_accessor :cliente
+
+  def initialize
+    @contas
+  end
+
+  def depositar
+    puts "Depositar"
+    print "Conta: "
+    conta = gets.chomp
+    print "Valor: "
+    valor = gets.chomp.to_f
+    cliente = @contas.find {|c| c[:conta] == conta}
+
+    if cliente
+      puts "Cliente encontrado!"
+      puts "Nome: #{cliente[:nome]}"
+      puts "CPF: #{cliente[:cpf]}"
+      puts "R$ #{valor}"
+      puts "Confirma depósito? 1 - Sim | Enter - Sair"
+      opcao = gets.chomp
+      if opcao == '1'
+        cliente[:saldo] += valor
+        puts "Depósito de R$ #{valor} efetuado!"
+        puts "Saldo atual: #{cliente[:saldo]}"
+      else
+        puts "depósito não realizado!"
+        return
+      end
+    else
+      puts "Conta inexistente!"
+    end
+  end
+
+  def sacar
+  end
+
+  def transferir
+  end
 end
 
 cliente = Cliente.new
 #cliente.cadastrar
-cliente.clientes
+cliente.lista_clientes
 
 conta = Conta.new
 conta.adicionar_conta(cliente.cliente_banco)
